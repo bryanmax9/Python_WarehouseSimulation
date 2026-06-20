@@ -1,0 +1,23 @@
+# RL Warehouse — CPU-only, cross-platform (Windows / Mac / Linux), Python 3.10–3.12.
+# NOTE: Python 3.13/3.14 have no torch/SB3 wheels yet — use 3.10–3.12.
+#
+# Install CPU torch from its own index so no CUDA is pulled:
+#   pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+#
+torch==2.12.1            # install via the CPU index URL above
+gymnasium==1.0.0
+stable-baselines3==2.6.0
+numpy==2.4.6
+matplotlib==3.11.0       # learning-curve plot in train.py
+tqdm>=4.66               # PPO progress bar
+pygame>=2.5              # visualization only (the RL pipeline never imports it)
+modal>=0.64              # cloud training only
+python-dotenv>=1.0       # load sponsor keys from .env (env_setup.py)
+hud-python>=0.6          # HUD env + evals (hud_warehouse.py); brings the `hud` CLI
+# Sponsor SDKs (install as you add each integration):
+#   pip install anthropic        # Claude coordinator agent
+#   pip install fireworks-ai     # fine-tuned open models (RFT)
+# rware is NOT required: this project ships its OWN custom Gymnasium env
+# (warehouse_env.py). It's in the brief's install line for reference only.
+# rware
