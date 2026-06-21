@@ -10,11 +10,12 @@ const FULL = [
   ['Greedy LLM (mock)', '40.3', '1.0', '21.3'],
 ]
 const HARD: [string, string, string][] = [
-  ['Greedy dispatcher', '0.733', 'win'],
-  ['Base LLM (minimax-m3) — no fine-tune', '0.733', 'win'],
-  ['Fine-tuned Gemma (small)', '0.31', ''],
-  ['Base Gemma (small)', '0.29', ''],
-  ['No-op (does nothing)', '0.00', 'zero'],
+  ['Claude Opus 4.8 — on HUD', '0.867', 'win'],
+  ['Gemini 3.1 Flash Lite — on HUD', '0.870', 'win'],
+  ['GPT-4o-mini — on HUD', '0.800', 'win'],
+  ['Heuristic (nearest-rack)', '0.730', ''],
+  ['Fine-tuned Gemma (small)', '0.310', ''],
+  ['No-op (does nothing)', '0.000', 'zero'],
 ]
 const LOOP = [
   ['Environment', 'WarehouseEnv — a Gymnasium world of robots, orders & a trending item'],

@@ -1,0 +1,15 @@
+# Netlify config for the 3D warehouse web app (lives in web/).
+# In the Netlify UI set "Base directory" = web ; this file does the rest.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback: React Router routes like /simulation must serve index.html
+# instead of 404'ing on a direct load / refresh.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
