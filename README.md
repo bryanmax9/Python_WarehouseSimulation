@@ -1,26 +1,30 @@
-# 🤖 RL Warehouse — robots that *learn* to run a warehouse
+# Warehouse AI - YC Hackathon 2026
 
-A Reinforcement Learning environment where Amazon-Kiva-style robots **learn**
-(via PPO) to coordinate, fulfill orders, avoid each other and a human, and
-intelligently **hover near the exit for trending items** — all learned behavior,
-not hardcoded rules. Train in simulation → deploy to real AMRs.
+A warehouse RL environment where autonomous robots learn (via PPO) to coordinate, fulfill orders, avoid each other and a human, and intelligently hover near the exit for trending items. An AI coordinator handles high-level dispatch; the environment scores every run on orders fulfilled, alerts resolved, and collisions, so you can train frontier models in simulation and prove they got better before deploying to real warehouse robots.
 
 **CPU-only. Cross-platform. Python 3.10–3.12.**
 
 > The RL environment + training pipeline is the core. The pygame window is just
 > a viewer that shows what the trained policy is doing.
 
+## Resources
+
+- **Website:** https://warehouse-rl.netlify.app
+- **Video:** https://youtu.be/BYLHFm-GFRs
+- **Slides:** https://drive.google.com/file/d/1GrnvanYkYyoUGFUBX5h-ejnqgoCNgFW0/view?usp=sharing
+
 ## Architecture (in order of importance)
 
-| File | Role |
-|------|------|
-| `warehouse_env.py` | **The RL environment.** Gymnasium-compatible, multi-robot, custom obs/action/reward. Plus `ParameterSharingVecEnv` so one shared PPO policy controls every robot. |
-| `train.py` | Local PPO training (fast verification) + learning-curve plot. |
-| `modal_train.py` | The same training on **Modal** cloud for 1M+ steps (sponsor credits). |
-| `visualize.py` | pygame viewer of the **trained** robots; WASD human they avoid. |
-| `warehouse_core.py` | Shared world model: grid, shelves, 20 SKUs, order queue + trending, alerts. No ML/pygame deps. |
+| File                | Role                                                                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `warehouse_env.py`  | **The RL environment.** Gymnasium-compatible, multi-robot, custom obs/action/reward. Plus `ParameterSharingVecEnv` so one shared PPO policy controls every robot. |
+| `train.py`          | Local PPO training (fast verification) + learning-curve plot.                                                                                                     |
+| `modal_train.py`    | The same training on **Modal** cloud for 1M+ steps (sponsor credits).                                                                                             |
+| `visualize.py`      | pygame viewer of the **trained** robots; WASD human they avoid.                                                                                                   |
+| `warehouse_core.py` | Shared world model: grid, shelves, 20 SKUs, order queue + trending, alerts. No ML/pygame deps.                                                                    |
 
 ### The RL formulation
+
 - **Action (Discrete 7):** up / down / left / right / pickup / drop / hover.
 - **Observation (25 floats, normalized):** own position, carrying + SKU, phase,
   vector to current target, 2 nearest robots, human position/distance/zone,
@@ -34,7 +38,8 @@ not hardcoded rules. Train in simulation → deploy to real AMRs.
   supersuit/pettingzoo, CPU-only.
 
 ### Engineering notes (what we actually learned tuning it)
-- **Robots drive *under* the pods** (real Kiva behavior) → the floor is an open
+
+- **Robots drive _under_ the pods** (real Kiva behavior) → the floor is an open
   grid, which makes navigation learnable from a `(dx,dy)`-to-target signal.
 - **Pickup/drop fire on arrival** — lifting a pod is mechanical; PPO spends its
   capacity on the hard part (navigation + collision avoidance + the hover
@@ -50,21 +55,25 @@ Result: from a standing start PPO goes **0 → ~32 orders/episode** (matches a
 BFS planner baseline) in ~1M CPU steps (~75s on an 8-core laptop).
 
 ### HUD.ai
+
 `WarehouseEnv` is a standard `gymnasium.Env` registered as `Warehouse-v0`. See
 the `# HUD_HOOK` comments for the wrap/register points.
 
 ---
 
 ## Setup
+
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate        # (Win: .venv\Scripts\activate)
 pip install --upgrade pip
 pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
+
 > The `.venv` here is already set up — just `source .venv/bin/activate`.
 
 ## Run it — in order
+
 ```bash
 # 1. Quick local training (verify the pipeline) -> models/ppo_warehouse.zip + learning curve
 python train.py                          # 50k steps (fast)
@@ -78,10 +87,12 @@ modal volume get warehouse-models ppo_warehouse_cloud.zip models/ppo_warehouse_c
 # 3. Watch the trained robots (pygame)
 python visualize.py
 ```
+
 **Visualizer controls:** `WASD`/arrows move the human · `E` interact (pick up
 fallen item → BOX → STOCK, +20 team reward) · `R` reset · `ESC` quit. The viewer
 auto-loads the cloud model, then the local model, else a scripted baseline.
 
 ## Outputs
+
 - `models/ppo_warehouse.zip` — trained shared policy
 - `models/reward_curve.png` — learning curve · `models/reward_log.csv`
