@@ -1,0 +1,4 @@
+coordinator,orders,missing,collisions,reward
+Heuristic (built-in),41.3,0.0,3.0,-2197.0
+Base LLM (minimax-m3),40.7,1.0,4.0,-2089.3
+Greedy LLM (mock),40.3,1.0,21.3,-2212.3

@@ -1,0 +1,4 @@
+coordinator,reward,orders_from_dispatch
+Greedy LLM (mock),0.733,11.0
+Base LLM (minimax-m3),0.733,11.0
+No-op (does nothing),0.0,0.0
