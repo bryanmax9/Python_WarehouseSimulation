@@ -33,6 +33,9 @@ const WORKER_SIZE = 1.7       // person height
 const WORKER_ROT = 0          // rotate if the worker's "front" isn't +Z
 const RESTOCK_URL = '/models/pallet.glb'      // pallet of boxes at the stock area
 const BOXING_URL = '/models/packing.glb'      // packing station at the boxing area
+const SHELL_URL = '/models/shell.glb'         // the warehouse building everything sits in
+const SHELL_SIZE = 26                          // footprint span (grid is ~19.5 x 16.5)
+const SHELL_TINT = '#7c8493'                   // concrete grey (model ships untextured)
 useGLTF.preload(ROBOT_URL)
 useGLTF.preload(PICKER_URL)
 useGLTF.preload(POD_URL)
@@ -48,8 +51,8 @@ const dampAngle = (cur: number, target: number, lambda: number, dt: number) => {
 
 // Loads a GLB, deep-clones it (so it can appear many times), auto-scales it to a
 // target size, centers it on x/z and sits it on the floor. castShadow on.
-function GLBModel({ url, target, rotY = 0, fitFootprint = false, tint }:
-  { url: string; target: number; rotY?: number; fitFootprint?: boolean; tint?: string }) {
+function GLBModel({ url, target, rotY = 0, fitFootprint = false, tint, shadow = true }:
+  { url: string; target: number; rotY?: number; fitFootprint?: boolean; tint?: string; shadow?: boolean }) {
   const { scene } = useGLTF(url)
   const obj = useMemo(() => {
     const c = scene.clone(true)
@@ -65,7 +68,7 @@ function GLBModel({ url, target, rotY = 0, fitFootprint = false, tint }:
     c.traverse((o: THREE.Object3D) => {
       const m = o as THREE.Mesh
       if (!m.isMesh) return
-      m.castShadow = true; m.receiveShadow = true
+      m.castShadow = shadow; m.receiveShadow = true
       // GLB exports are often fully metallic with no env map -> they render
       // black. Tame metalness so direct lights illuminate them properly.
       const mats = Array.isArray(m.material) ? m.material : [m.material]
@@ -82,7 +85,7 @@ function GLBModel({ url, target, rotY = 0, fitFootprint = false, tint }:
       })
     })
     return c
-  }, [scene, target, fitFootprint, tint])
+  }, [scene, target, fitFootprint, tint, shadow])
   return (
     <group rotation={[0, rotY, 0]}>
       <primitive object={obj} />
@@ -204,12 +207,15 @@ export default function Warehouse3D({ sim, selected, onSelect }: {
         </mesh>
       </group>
 
-      {/* floor + grid */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      {/* the warehouse building everything sits inside */}
+      <GLBModel url={SHELL_URL} target={SHELL_SIZE} fitFootprint tint={SHELL_TINT} shadow={false} />
+
+      {/* floor + grid (grid floats just above the shell floor) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow>
         <planeGeometry args={[COLS * SP + 4, ROWS * SP + 4]} />
         <meshStandardMaterial color="#171d2b" roughness={0.95} />
       </mesh>
-      <gridHelper args={[Math.max(COLS, ROWS) * SP + 4, Math.max(COLS, ROWS) + 3, '#2b3650', '#222a3c']} position={[0, 0.01, 0]} />
+      <gridHelper args={[Math.max(COLS, ROWS) * SP + 4, Math.max(COLS, ROWS) + 3, '#2b3650', '#222a3c']} position={[0, 0.04, 0]} />
 
       {/* picker = workstation GLB model */}
       <group position={[wx(sim.picker), 0, wz(sim.picker)]}>
