@@ -105,7 +105,7 @@ function Row({ k, v }: { k: string; v: string }) {
 function Panel({ children }: { children: React.ReactNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-      className="absolute top-5 right-5 w-72 bg-black/55 backdrop-blur border border-white/15 rounded-2xl p-4">
+      className="absolute top-3 right-3 sm:top-5 sm:right-5 w-[min(18rem,calc(100vw-1.5rem))] bg-black/55 backdrop-blur border border-white/15 rounded-2xl p-3 sm:p-4 z-20">
       {children}
     </motion.div>
   )
@@ -116,9 +116,9 @@ function HUD({ sim, sel, setSel }: { sim: WarehouseSim; sel: Sel; setSel: (s: Se
   const logs = sim.logs.slice(-16).reverse()
   return (
     <>
-      <div className="absolute top-5 left-5 flex items-center gap-3">
-        <Link to="/" className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur text-zinc-900 text-sm font-medium px-4 py-2 rounded-full hover:bg-white transition-colors">← back</Link>
-        <div className="bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-2 text-white/90 text-sm flex gap-4">
+      <div className="absolute top-3 left-3 sm:top-5 sm:left-5 flex flex-wrap items-center gap-2 max-w-[calc(100vw-1.5rem)]">
+        <Link to="/" className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur text-zinc-900 text-xs sm:text-sm font-medium px-3 py-1.5 sm:px-4 sm:py-2 rounded-full hover:bg-white transition-colors">← back</Link>
+        <div className="bg-white/10 backdrop-blur border border-white/15 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-white/90 text-xs sm:text-sm flex flex-wrap gap-2 sm:gap-4">
           <span><b className="text-[#46d68a]">{sim.orders}</b> orders</span>
           <span><b className="text-[#ffd75c]">{skuName(sim.trending)}</b> trending</span>
           <span><b className="text-[#ef6b6b]">{sim.fallen.length}</b> alerts</span>
@@ -126,9 +126,9 @@ function HUD({ sim, sel, setSel }: { sim: WarehouseSim; sel: Sel; setSel: (s: Se
       </div>
 
       <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-        className="absolute bottom-5 left-5 w-[420px] max-w-[44vw] bg-black/45 backdrop-blur border border-white/12 rounded-2xl p-4">
+        className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5 w-[min(420px,calc(100vw-1.5rem))] bg-black/45 backdrop-blur border border-white/12 rounded-2xl p-3 sm:p-4 z-10">
         <div className="text-white/90 text-xs font-semibold tracking-widest uppercase mb-2">Coordinator log · live</div>
-        <div className="font-mono text-[12px] leading-relaxed h-44 overflow-hidden">
+        <div className="font-mono text-[11px] sm:text-[12px] leading-relaxed h-28 sm:h-44 overflow-hidden">
           {logs.map((l, i) => (
             <div key={i} style={{ color: LOG_COLOR[l.kind] || '#cdd6e6', opacity: 1 - i * 0.045 }} className="truncate">{l.msg}</div>
           ))}
@@ -138,7 +138,7 @@ function HUD({ sim, sel, setSel }: { sim: WarehouseSim; sel: Sel; setSel: (s: Se
       {sel
         ? <Inspector sim={sim} sel={sel} onClose={() => setSel(null)} />
         : (
-          <div className="absolute top-5 right-5 bg-white/10 backdrop-blur border border-white/15 rounded-2xl p-4 text-white/85 text-sm w-64">
+          <div className="hidden sm:block absolute top-5 right-5 bg-white/10 backdrop-blur border border-white/15 rounded-2xl p-4 text-white/85 text-sm w-64 z-20">
             <div className="font-display font-semibold mb-2 text-white">Live 3D warehouse <span className="text-[#9fff00]">· WebGL</span></div>
             <div className="flex items-center gap-2 mb-1.5"><Dot c="#5ab0f4" /> robots — <b>click to inspect</b></div>
             <div className="flex items-center gap-2 mb-1.5"><Dot c="#cfd5e6" /> racks — <b>click to inspect</b></div>
@@ -151,7 +151,7 @@ function HUD({ sim, sel, setSel }: { sim: WarehouseSim; sel: Sel; setSel: (s: Se
           </div>
         )}
 
-      <div className="absolute bottom-5 right-5 text-white/45 text-xs">drag to orbit · scroll to zoom · click empty space to deselect</div>
+      <div className="hidden sm:block absolute bottom-5 right-5 text-white/45 text-xs">drag to orbit · scroll to zoom · click empty space to deselect</div>
     </>
   )
 }
